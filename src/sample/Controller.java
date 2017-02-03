@@ -2,10 +2,14 @@ package sample;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import java.net.URL;
 import java.sql.*;
@@ -30,16 +34,34 @@ public class Controller implements Initializable{
     @FXML private TableColumn<Host, String> row6;
     @FXML private TableColumn<Host, String> row7;
     @FXML private TableColumn<Host, String> row8;
+    @FXML private TextField textfield = new TextField();
+    @FXML private Button btn = new Button();
 
     public ObservableList list = FXCollections.observableArrayList();
 
-    private void initOnDemand(String txt){
-        
-
-    }
+    String query = "SELECT events.eventid AS id, " +
+            "from_unixtime( clock, '%Y-%m-%d %H.%i.%s' ) AS event_time, " +
+            "triggers.description AS 'trigger', items.name AS item, events.value AS status, " +
+            "triggers.priority, hosts.name, interface.ip FROM zabbix.triggers AS triggers, " +
+            "zabbix.events AS events, " +
+            "zabbix.functions AS functions, " +
+            "zabbix.items AS items, " +
+            "zabbix.hosts AS hosts, " +
+            "zabbix.interface AS interface " +
+            "WHERE triggers.triggerid = events.objectid AND " +
+            "functions.triggerid = triggers.triggerid AND " +
+            "functions.itemid = items.itemid AND " +
+            "items.hostid = hosts.hostid AND " +
+            "interface.hostid = hosts.hostid AND " +
+            "events.source = 0 AND " +
+            "interface.main = 1 AND " +
+            "events.clock " +
+            "BETWEEN UNIX_TIMESTAMP( '2017-01-14 00:00:00' ) AND " +
+            "UNIX_TIMESTAMP( '2017-01-17 00:00:00' ) " +
+            "ORDER BY id ASC LIMIT 10";
 
     private void initData(){
-        String query = "SELECT events.eventid AS id, from_unixtime( clock, '%Y-%m-%d %H.%i.%s' ) AS event_time, triggers.description AS 'trigger', items.name AS item, events.value AS status, triggers.priority, hosts.name, interface.ip FROM zabbix.triggers AS triggers, zabbix.events AS events, zabbix.functions AS functions, zabbix.items AS items, zabbix.hosts AS hosts, zabbix.interface AS interface WHERE triggers.triggerid = events.objectid AND functions.triggerid = triggers.triggerid AND functions.itemid = items.itemid AND items.hostid = hosts.hostid AND interface.hostid = hosts.hostid AND events.source = 0 AND interface.main = 1 AND events.clock BETWEEN UNIX_TIMESTAMP( '2017-01-14 00:00:00' ) AND UNIX_TIMESTAMP( '2017-01-17 00:00:00' ) ORDER BY id ASC LIMIT 10";
+
 
         try {
             con = DriverManager.getConnection(url, user, password);
@@ -82,6 +104,41 @@ public class Controller implements Initializable{
         row7.setCellValueFactory(new PropertyValueFactory<Host, String>("row7"));
         row8.setCellValueFactory(new PropertyValueFactory<Host, String>("row8"));
         tableHosts.setItems(list);
+
+            btn.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    if (textfield != null){
+                        list.clear();
+                        System.out.println("Searching"+ textfield.getText());
+                        query = "SELECT events.eventid AS id, " +
+                                "from_unixtime( clock, '%Y-%m-%d %H.%i.%s' ) AS event_time, " +
+                                "triggers.description AS 'trigger', " +
+                                "items.name AS item, " +
+                                "events.value AS status, triggers.priority, hosts.name, interface.ip " +
+                                "FROM zabbix.triggers AS triggers, " +
+                                "zabbix.events AS events, " +
+                                "zabbix.functions AS functions, " +
+                                "zabbix.items AS items, " +
+                                "zabbix.hosts AS hosts, " +
+                                "zabbix.interface AS interface " +
+                                "WHERE triggers.triggerid = events.objectid AND " +
+                                "functions.triggerid = triggers.triggerid AND " +
+                                "functions.itemid = items.itemid AND " +
+                                "items.hostid = hosts.hostid AND " +
+                                "interface.hostid = hosts.hostid AND " +
+                                "events.source = 0 AND " +
+                                "interface.main = 1 AND " +
+                                "hosts.name LIKE '%" + textfield.getText() + "%' AND " +
+                                "events.clock " +
+                                "BETWEEN UNIX_TIMESTAMP( '2017-01-14 00:00:00' ) AND " +
+                                "UNIX_TIMESTAMP( '2017-01-17 00:00:00' ) " +
+                                "ORDER BY id ASC LIMIT 10";
+                        initData();
+                    }
+                }
+            });
+
 
     }
 }

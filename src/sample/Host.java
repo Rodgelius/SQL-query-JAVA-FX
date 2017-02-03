@@ -27,31 +27,24 @@ public class Host {
     public String getRow1() {
         return row1.get();
     }
-
     public String getRow2() {
         return row2.get();
     }
-
     public String getRow3() {
         return row3.get();
     }
-
     public String getRow4() {
         return row4.get();
     }
-
     public String getRow5() {
         return row5.get();
     }
-
     public String getRow6() {
         return row6.get();
     }
-
     public String getRow7() {
         return row7.get();
     }
-
     public String getRow8() {
         return row8.get();
     }
