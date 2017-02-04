@@ -8,25 +8,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import kotlin.reflect.jvm.internal.impl.descriptors.EffectiveVisibility;
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.concurrent.CancellationException;
-
-import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 
 public class Controller implements Initializable{
 
